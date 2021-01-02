@@ -5,6 +5,7 @@ require 't/printable'
 require 't/rcfile'
 require 't/requestable'
 require 't/utils'
+require 'time'
 
 module T
   class Search < Thor
@@ -166,6 +167,7 @@ module T
     method_option 'max_id', aliases: '-m', type: :numeric, desc: 'Returns only the results with an ID less than the specified ID.'
     method_option 'relative_dates', aliases: '-a', type: :boolean, desc: 'Show relative dates.'
     method_option 'since_id', aliases: '-s', type: :numeric, desc: 'Returns only the results with an ID greater than the specified ID.'
+    method_option 'since_date', type: :string, desc: 'Filter to include only results greater than the specified date.'
     def timeline(*args)
       query = args.pop
       user = args.pop
@@ -191,6 +193,7 @@ module T
       tweets = tweets.select do |tweet|
         /#{query}/i.match(tweet.full_text)
       end
+      tweets = tweets.select { |tweet| tweet.created_at > Time.parse(options['since_date']) } if options['since_date']
       print_tweets(tweets)
     end
     map %w[tl] => :timeline

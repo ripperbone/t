@@ -684,6 +684,20 @@ describe T::Search do
         EOS
       end
     end
+    context '--since-date' do
+      before do
+        @search.options = @search.options.merge('since_date' => "2012-09-07 15:51:00 +0000")
+      end
+      it 'outputs results after the specified date' do
+        @search.timeline('twitter')
+        expect($stdout.string).to eq <<-EOS
+   @sferik
+   @episod @twitterapi now https://t.co/I17jUTu2 and https://t.co/deDu4Hgw seem to be
+   missing "1.1" from the URL.
+
+        EOS
+      end
+    end
     context '--max-id' do
       before do
         @search.options = @search.options.merge('max_id' => 244_104_558_433_951_744)
